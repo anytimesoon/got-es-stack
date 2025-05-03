@@ -7,8 +7,10 @@ import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.springframework.http.HttpStatus
 import xyz.delartigue.gotdemo.controllers.dto.ActorDTO
+import xyz.delartigue.gotdemo.controllers.dto.CharacterDTO
 import xyz.delartigue.gotdemo.services.ActorService
 import xyz.delartigue.gotdemo.services.model.ActorModel
+import xyz.delartigue.gotdemo.services.model.CharacterModel
 import kotlin.test.BeforeTest
 
 class ActorControllerTest {
@@ -26,12 +28,12 @@ class ActorControllerTest {
     @Test
     fun `getActors returns all actors as DTOs`() {
         val mockedModels = listOf(
-            ActorModel(1, "Keanu Reeves"),
-            ActorModel(2, "Martin Daruss")
+            ActorModel(1, "Keanu Reeves", null),
+            ActorModel(2, "Martin Daruss", null)
         )
         val expectedDTOs = listOf(
-            ActorDTO(1, "Keanu Reeves"),
-            ActorDTO(2, "Martin Daruss")
+            ActorDTO(1, "Keanu Reeves", null),
+            ActorDTO(2, "Martin Daruss", null)
         )
         given(actorService.getActors()).willReturn(mockedModels)
 
@@ -42,10 +44,10 @@ class ActorControllerTest {
 
     @Test
     fun `createActor creates a new actor and returns it with CREATED status`() {
-        val inputDTO = ActorDTO(1, "Keanu Reeves")
-        val inputModel = ActorModel(1, "Keanu Reeves")
-        val createdModel = ActorModel(1, "Keanu Reeves")
-        val expectedDTO = ActorDTO(1, "Keanu Reeves")
+        val inputDTO = ActorDTO(1, "Keanu Reeves", null)
+        val inputModel = ActorModel(1, "Keanu Reeves", null)
+        val createdModel = ActorModel(1, "Keanu Reeves", null)
+        val expectedDTO = ActorDTO(1, "Keanu Reeves", null)
 
         given(actorService.createActor(inputModel)).willReturn(createdModel)
 
@@ -58,8 +60,8 @@ class ActorControllerTest {
     @Test
     fun `getActorById returns actor with OK status when found`() {
         val actorId = 1
-        val foundModel = ActorModel(actorId, "Keanu Reeves")
-        val expectedDTO = ActorDTO(actorId, "Keanu Reeves")
+        val foundModel = ActorModel(actorId, "Keanu Reeves", null)
+        val expectedDTO = ActorDTO(actorId, "Keanu Reeves", null)
 
         given(actorService.getActorById(actorId)).willReturn(foundModel)
 
@@ -83,10 +85,10 @@ class ActorControllerTest {
 
     @Test
     fun `updateActor returns updated actor with OK status when found`() {
-        val inputDTO = ActorDTO(1, "Keanu Reeves Updated")
-        val inputModel = ActorModel(1, "Keanu Reeves Updated")
-        val updatedModel = ActorModel(1, "Keanu Reeves Updated")
-        val expectedDTO = ActorDTO(1, "Keanu Reeves Updated")
+        val inputDTO = ActorDTO(1, "Keanu Reeves Updated", null)
+        val inputModel = ActorModel(1, "Keanu Reeves Updated", null)
+        val updatedModel = ActorModel(1, "Keanu Reeves Updated", null)
+        val expectedDTO = ActorDTO(1, "Keanu Reeves Updated", null)
 
         given(actorService.updateActor(inputModel)).willReturn(updatedModel)
 
@@ -98,12 +100,32 @@ class ActorControllerTest {
 
     @Test
     fun `updateActor returns NOT_FOUND status when actor not found`() {
-        val inputDTO = ActorDTO(999, "Nonexistent Actor")
-        val inputModel = ActorModel(999, "Nonexistent Actor")
+        val inputDTO = ActorDTO(999, "Nonexistent Actor", null)
+        val inputModel = ActorModel(999, "Nonexistent Actor", null)
 
         given(actorService.updateActor(inputModel)).willReturn(null)
 
         val response = controller.updateActor(inputDTO)
+
+        assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
+        assertNull(response.body)
+    }
+
+    @Test
+    fun `linkActorToCharacter returns updated actor with OK status when found`() {
+        given(actorService.linkActorToCharacter(1, 1)).willReturn(ActorModel(1, "Keanu Reeves", CharacterModel(1, "Neo")))
+
+        val response = controller.linkActorToCharacter(1, 1)
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(ActorDTO(1, "Keanu Reeves", CharacterDTO(1, "Neo")), response.body)
+    }
+
+    @Test
+    fun `linkActorToCharacter returns NOT_FOUND status when actor or character not found`() {
+        given(actorService.linkActorToCharacter(999, 999)).willReturn(null)
+
+        val response = controller.linkActorToCharacter(999, 999)
 
         assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
         assertNull(response.body)

@@ -44,11 +44,24 @@ class ActorController (
         return ResponseEntity(actor, HttpStatus.OK)
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("")
     fun updateActor(
         @RequestBody actorDTO: ActorDTO
     ): ResponseEntity<ActorDTO> {
         val actor = actorService.updateActor(actorDTO.toModel())?.toDTO()
+
+        if (actor == null) {
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        }
+        return ResponseEntity(actor, HttpStatus.OK)
+    }
+
+    @PutMapping("/{actor_id}/link_to/{character_id}")
+    fun linkActorToCharacter(
+        @PathVariable("actor_id") actorId: Int,
+        @PathVariable("character_id") characterId: Int
+    ): ResponseEntity<ActorDTO> {
+        val actor = actorService.linkActorToCharacter(actorId, characterId)?.toDTO()
 
         if (actor == null) {
             return ResponseEntity(HttpStatus.NOT_FOUND)
