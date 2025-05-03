@@ -17,7 +17,7 @@ fun ActorModel.toEntity(): ActorEntity =
 
 fun ActorEntity.toModel(): ActorModel =
     ActorModel(
-        id = this.id,
+        id = this.id!!,
         name = this.name,
         character = this.character?.toModel()
     )

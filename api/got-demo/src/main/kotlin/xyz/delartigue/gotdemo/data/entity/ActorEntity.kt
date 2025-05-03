@@ -13,9 +13,9 @@ import jakarta.persistence.Table
 data class ActorEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int,
+    val id: Int?,
     val name: String,
-    @OneToOne(mappedBy = "actor")
+    @OneToOne
     @JoinColumn(name = "character_id", referencedColumnName = "id")
     val character: CharacterEntity?
 )

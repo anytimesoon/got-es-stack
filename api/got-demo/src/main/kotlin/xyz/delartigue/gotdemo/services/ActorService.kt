@@ -15,7 +15,7 @@ class ActorService (
 ) {
     fun getActors() = actorRepository.findAll().map { it.toModel()}
 
-    fun createActor(actor: ActorModel) = actorRepository.save(actor.toEntity()).toModel()
+    fun createActor(actor: ActorModel) = actorRepository.save(actor.toEntity().copy(id = null)).toModel()
 
     fun getActorById(id: Int): ActorModel? {
         val actor = actorRepository.findById(id)

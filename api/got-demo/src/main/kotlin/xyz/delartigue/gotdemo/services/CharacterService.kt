@@ -13,7 +13,7 @@ class CharacterService (
 ) {
     fun getCharacters() = characterRepository.findAll().map { it.toModel()}
 
-    fun createCharacter(character: CharacterModel) = characterRepository.save(character.toEntity()).toModel()
+    fun createCharacter(character: CharacterModel) = characterRepository.save(character.toEntity().copy(id = null)).toModel()
 
     fun getCharacterById(id: Int): CharacterModel? {
         val character = characterRepository.findById(id)

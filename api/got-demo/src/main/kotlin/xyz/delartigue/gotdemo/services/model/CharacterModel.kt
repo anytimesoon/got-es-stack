@@ -15,6 +15,6 @@ fun CharacterModel.toEntity(): CharacterEntity =
 
 fun CharacterEntity.toModel(): CharacterModel =
     CharacterModel(
-        id = this.id,
+        id = this.id!!,
         name = this.name
     )
