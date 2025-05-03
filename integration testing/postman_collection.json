@@ -1,0 +1,440 @@
+{
+	"info": {
+		"_postman_id": "a0c5c7d2-9686-4db3-8d15-f903f81c6bb0",
+		"name": "GOT",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "4507098"
+	},
+	"item": [
+		{
+			"name": "Characters",
+			"item": [
+				{
+					"name": "Create Character",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response",
+									"",
+									"pm.test('create character', () => {",
+									"    response.to.have.status(201)",
+									"})",
+									"",
+									"const payload = response.json()",
+									"pm.collectionVariables.set('character_id', payload.id)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"id\":1,\"name\":\"Aegon Targaryen\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/characters"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Character Again",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const payload = pm.response.json()",
+									"pm.collectionVariables.set('character2_id', payload.id)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"id\":0,\"name\":\"Addam Marbrand\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/characters"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Characters",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('gets characters', () => {",
+									"    pm.response.to.have.status(200)",
+									"",
+									"    const characters = pm.response.json()",
+									"    pm.expect(characters.length).to.be.greaterThan(0)",
+									"})",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/characters"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Character By Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('gets actor by id', () => {",
+									"    pm.response.to.have.status(200)",
+									"",
+									"    const character = pm.response.json()",
+									"    pm.expect(character.name).to.not.eql(null)",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/characters/{{character_id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Character",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('actor is updated', () => {",
+									"    pm.response.to.have.status(200)",
+									"",
+									"    const character = pm.response.json()",
+									"    const hasUpdatedInName = character.name.includes('Updated')",
+									"    pm.expect(hasUpdatedInName).to.be.true",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"id\":{{character_id}},\"name\":\"Aegon Targaryen Updated\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/characters"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Character",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('delete character', () => {",
+									"    pm.response.to.have.status(204)",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8080/characters/{{character_id}}"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Actors",
+			"item": [
+				{
+					"name": "Create Actor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response",
+									"",
+									"pm.test('create actor', () => {",
+									"    response.to.have.status(201)",
+									"})",
+									"",
+									"const payload = response.json()",
+									"pm.collectionVariables.set('actor_id', payload.id)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"id\":1,\"name\":\"B.J. Hogg\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/actors"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Actors",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('gets actors', () => {",
+									"    pm.response.to.have.status(200)",
+									"",
+									"    const actors = pm.response.json()",
+									"    pm.expect(actors.length).to.be.greaterThan(0)",
+									"})",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/actors"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Actor By Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('gets actor by id', () => {",
+									"    pm.response.to.have.status(200)",
+									"",
+									"    const actor = pm.response.json()",
+									"    pm.expect(actor.name).to.not.eql(null)",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/actors/{{actor_id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Actor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('actor is updated', () => {",
+									"    pm.response.to.have.status(200)",
+									"",
+									"    const actor = pm.response.json()",
+									"    const hasUpdatedInName = actor.name.includes('Updated')",
+									"    pm.expect(hasUpdatedInName).to.be.true",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"id\":{{actor_id}},\"name\":\"B.J. Hogg Updated\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/actors"
+					},
+					"response": []
+				},
+				{
+					"name": "Link to Character",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('actor is linked to character', () => {",
+									"     pm.response.to.have.status(200)",
+									"",
+									"    const actor = pm.response.json()",
+									"    pm.expect(actor.character).to.not.be.null",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:8080/actors/{{actor_id}}/link_to/{{character2_id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Actor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('delete actor', () => {",
+									"    pm.response.to.have.status(204)",
+									"})",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8080/actors/{{actor_id}}"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Search",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/search?q=hello",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "hello"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "actor_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "character_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "character2_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

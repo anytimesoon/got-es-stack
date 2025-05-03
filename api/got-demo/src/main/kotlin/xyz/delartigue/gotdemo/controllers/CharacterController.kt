@@ -44,7 +44,7 @@ class CharacterController (
         return ResponseEntity(character, HttpStatus.OK)
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("")
     fun updateCharacter(
         @RequestBody characterDTO: CharacterDTO
     ): ResponseEntity<CharacterDTO> {
