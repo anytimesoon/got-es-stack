@@ -14,3 +14,5 @@ CREATE TABLE IF NOT EXISTS actor (
     PRIMARY KEY(id),
     CONSTRAINT fk_character FOREIGN KEY (character_id) REFERENCES character(id)
 );
+
+CREATE PUBLICATION got_publication FOR TABLE actor, character;

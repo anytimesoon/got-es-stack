@@ -1,23 +1,46 @@
 services:
-  db:
-    container_name: db
-    restart: always
+  postgres:
     image: postgres:16-alpine
+    restart: always
     ports:
-      - 2345:5432
+      - "5432:5432"
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - ./db/scripts:/docker-entrypoint-initdb.d
     environment:
-      POSTGRES_HOST: db_recipes
-      POSTGRES_DB: gotdb
       POSTGRES_USER: gotdb
       POSTGRES_PASSWORD: change_me
+    command: postgres -c wal_level=logical
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: unless-stopped
+    ports:
+      - "15672:15672"
+      - "5552:5552"
+      - "5672:5672"
+    volumes:
+      - type: bind
+        source: ./rabbitmq/conf/rabbitmq-defs.json
+        target: /etc/rabbitmq/rabbitmq-defs.json
+      - type: bind
+        source: ./rabbitmq/conf/rabbitmq.conf
+        target: /etc/rabbitmq/rabbitmq.conf
+
+  debezium-server:
+    image: quay.io/debezium/server:2.4
+    container_name: debezium-server
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./debezium/conf:/debezium/conf
+    depends_on:
+      - rabbitmq
+      - postgres
 
   api:
     container_name: api
-    build:
-      dockerfile: ./Dockerfile.local.gradle
+    image: anytimesoon/got-api:v0.1
     ports:
-      - 8080:8080
-    volumes:
-      - ./api/got-demo/:app
+      - "8080:8080"
