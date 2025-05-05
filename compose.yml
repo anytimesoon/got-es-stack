@@ -54,19 +54,6 @@ services:
       - xpack.security.enabled=false
       - discovery.type=single-node
 
-  logstash:
-    image: logstash:8.18.0
-    container_name: logstash
-    depends_on:
-      - elasticsearch
-    volumes:
-      - ./logstash/conf/logstash.conf:/etc/logstash/conf.d/logstash.conf:ro
-    ports:
-      - "5044:5044"
-    environment:
-      - ES_JAVA_OPTS=-Xmx256m -Xms256m
-      - xpack.monitoring.enabled=false
-
 #  api:
 #    container_name: api
 #    image: anytimesoon/got-api:latest
