@@ -15,7 +15,7 @@ func newPersister() {
 	var err error
 	cfg := elasticsearch.Config{
 		Addresses: []string{
-			"http://localhost:9200",
+			*esUri,
 		},
 	}
 	p, err = elasticsearch.NewClient(cfg)
@@ -23,9 +23,19 @@ func newPersister() {
 		ErrLog.Fatalf("Error creating the client: %s", err)
 	}
 
-	_, err = p.Indices.Create(*esIndex)
+	exists, err := p.Indices.Exists([]string{*esIndex})
 	if err != nil {
-		ErrLog.Fatalf("Error creating index: %s", err)
+		ErrLog.Fatalf("Error checking if index exists: %s", err)
+	}
+
+	if exists.StatusCode == 404 {
+		_, err = p.Indices.Create(*esIndex)
+		if err != nil {
+			ErrLog.Fatalf("Error creating index: %s", err)
+		}
+		Log.Printf("Created index: %s", *esIndex)
+	} else {
+		Log.Printf("Index %s already exists", *esIndex)
 	}
 }
 

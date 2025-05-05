@@ -56,7 +56,7 @@ class CharacterServiceTest {
     fun `create character creates a new character`() {
         val mockedEntity = CharacterEntity(1, "Keanu Reeves")
         val expectedResult = CharacterModel(1, "Keanu Reeves")
-        given(characterRepository.save(mockedEntity)).willReturn(mockedEntity)
+        given(characterRepository.save(mockedEntity.copy(id = null))).willReturn(mockedEntity)
 
         val createdCharacter = service.createCharacter(CharacterModel(1, "Keanu Reeves"))
 

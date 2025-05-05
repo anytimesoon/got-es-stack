@@ -62,7 +62,7 @@ class ActorServiceTest {
     fun `create actor creates a new actor`() {
         val mockedEntity = ActorEntity(1, "Keanu Reeves", null)
         val expectedResult = ActorModel(1, "Keanu Reeves", null)
-        given(actorRepository.save(mockedEntity)).willReturn(mockedEntity)
+        given(actorRepository.save(mockedEntity.copy(id = null))).willReturn(mockedEntity)
 
         val createdActor = service.createActor(ActorModel(1, "Keanu Reeves", null))
 
