@@ -15,9 +15,9 @@ type Payload struct {
 }
 
 type After struct {
-	Id          int         `json:"id"`
-	Name        string      `json:"name"`
-	CharacterId interface{} `json:"character_id"`
+	Id          int    `json:"id"`
+	Name        string `json:"name"`
+	CharacterId int    `json:"character_id"`
 }
 
 type Source struct {

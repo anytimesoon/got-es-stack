@@ -5,7 +5,11 @@ import (
 )
 
 func newDocData(existingDoc models.EsRes, msg models.MQ) models.DocData {
-	if existingDoc.Hits.Total.Value == 0 {
+	if existingDoc.Hits.Total.Value > 1 {
+		return joinDoc(existingDoc, msg)
+	}
+
+	if existingDoc.Hits.Total.Value == 0 && msg.Payload.Op == "c" {
 		return createDoc(existingDoc, msg)
 	}
 
@@ -14,6 +18,30 @@ func newDocData(existingDoc models.EsRes, msg models.MQ) models.DocData {
 	}
 
 	return updateDoc(existingDoc, msg)
+}
+
+func joinDoc(existingDoc models.EsRes, msg models.MQ) models.DocData {
+	var actor, character models.SourceDoc
+	for _, hit := range existingDoc.Hits.Hits {
+		if hit.Source.ActorId > 0 {
+			actor = hit
+		}
+		if hit.Source.CharacterId > 0 {
+			character = hit
+		}
+	}
+
+	return models.DocData{
+		Action:     "join",
+		ExistingId: actor.Id,
+		DeleteId:   character.Id,
+		Doc: models.Document{
+			ActorId:       actor.Source.ActorId,
+			ActorName:     actor.Source.ActorName,
+			CharacterId:   character.Source.CharacterId,
+			CharacterName: character.Source.CharacterName,
+		},
+	}
 }
 
 func updateDoc(existingDoc models.EsRes, msg models.MQ) models.DocData {
@@ -30,9 +58,17 @@ func deleteDoc(existingDoc models.EsRes, msg models.MQ) models.DocData {
 	doc := newDoc(existingDoc, msg)
 
 	if doc.ActorName == "" || doc.CharacterName == "" {
+		var id string
+
+		if len(existingDoc.Hits.Hits) == 0 {
+			id = ""
+		} else {
+			id = existingDoc.Hits.Hits[0].Id
+		}
+
 		return models.DocData{
 			Action:     "delete",
-			ExistingId: existingDoc.Hits.Hits[0].Id,
+			ExistingId: id,
 			Doc:        doc,
 		}
 	}

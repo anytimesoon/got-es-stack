@@ -37,24 +37,48 @@ func persist(msg models.MQ) error {
 
 	data := newDocData(existingDoc, msg)
 
+	switch data.Action {
+	case "create":
+		return persistNewDoc(data)
+	case "delete":
+		return deleteExistingDoc(data)
+	case "join":
+		return joinDocs(data)
+	default:
+		return updateExistingDoc(data)
+	}
+}
+
+func joinDocs(data models.DocData) error {
+	updateBody := map[string]interface{}{
+		"doc": data.Doc,
+	}
+	d, err := json.Marshal(updateBody)
+	if err != nil {
+		return err
+	}
+
+	res, err := p.Update(*esIndex, data.ExistingId, bytes.NewReader(d))
+	if err != nil {
+		ErrLog.Printf("Error updating document: %s", err)
+	}
+	Log.Printf("Document updated: %s", res)
+	_, err = p.Delete(*esIndex, data.DeleteId)
+	if err != nil {
+		ErrLog.Printf("Error deleting document: %s", err)
+		return err
+	}
+	return nil
+}
+
+func persistNewDoc(data models.DocData) error {
 	d, err := json.Marshal(data.Doc)
 	if err != nil {
 		ErrLog.Printf("Error marshalling document: %s", err)
 		return err
 	}
 
-	switch data.Action {
-	case "create":
-		return persistNewDoc(d)
-	case "delete":
-		return deleteExistingDoc(data)
-	default:
-		return updateExistingDoc(data, d)
-	}
-}
-
-func persistNewDoc(d []byte) error {
-	_, err := p.Index(*esIndex, bytes.NewReader(d))
+	_, err = p.Index(*esIndex, bytes.NewReader(d))
 	if err != nil {
 		ErrLog.Printf("Error indexing document: %s", err)
 		return err
@@ -73,8 +97,16 @@ func deleteExistingDoc(data models.DocData) error {
 	return nil
 }
 
-func updateExistingDoc(data models.DocData, d []byte) error {
-	_, err := p.Update(*esIndex, data.ExistingId, bytes.NewReader(d))
+func updateExistingDoc(data models.DocData) error {
+	updateBody := map[string]interface{}{
+		"doc": data.Doc,
+	}
+	d, err := json.Marshal(updateBody)
+	if err != nil {
+		return err
+	}
+
+	_, err = p.Update(*esIndex, data.ExistingId, bytes.NewReader(d))
 	if err != nil {
 		ErrLog.Printf("Error updating document: %s", err)
 	}
@@ -83,17 +115,7 @@ func updateExistingDoc(data models.DocData, d []byte) error {
 }
 
 func getExisting(msg models.MQ) (models.EsRes, error) {
-	query := fmt.Sprintf(`{
-			  "query": { 
-				"bool": { 
-				  "should": [
-					{ "match": { "actor_name": "%s" }},
-					{ "match": { "character_name": "%s" }}
-				  ]
-				}
-			  }
-			}`, msg.Payload.After.Name, msg.Payload.After.Name)
-
+	query := buildQuery(msg)
 	res, err := p.Search(
 		p.Search.WithBody(strings.NewReader(query)),
 	)
@@ -107,4 +129,31 @@ func getExisting(msg models.MQ) (models.EsRes, error) {
 	}
 
 	return result, nil
+}
+
+func buildQuery(msg models.MQ) string {
+	switch msg.Payload.Source.Table {
+	case "actor":
+		return fmt.Sprintf(`{
+			  "query": { 
+				"bool": { 
+				  "should": [
+					{ "match": { "actor_id": %d }},
+					{ "match": { "character_id": %d }}
+				  ]
+				}
+			  }
+			}`, msg.Payload.After.Id, msg.Payload.After.CharacterId)
+	default:
+		return fmt.Sprintf(`{
+			  "query": { 
+				"bool": { 
+				  "should": [
+					{ "match": { "character_id": "%d" }}
+				  ]
+				}
+			  }
+			}`, msg.Payload.After.Id)
+	}
+
 }

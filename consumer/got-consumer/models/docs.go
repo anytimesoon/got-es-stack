@@ -3,6 +3,7 @@ package models
 type DocData struct {
 	Action     string
 	ExistingId string
+	DeleteId   string
 	Doc        Document
 }
 type Document struct {
