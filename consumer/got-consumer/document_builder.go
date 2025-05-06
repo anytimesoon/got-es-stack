@@ -6,7 +6,7 @@ import (
 
 func newDocData(existingDoc models.EsRes, msg models.MQ) models.DocData {
 	if existingDoc.Hits.Total.Value > 1 {
-		return joinDoc(existingDoc, msg)
+		return joinDoc(existingDoc)
 	}
 
 	if existingDoc.Hits.Total.Value == 0 && msg.Payload.Op == "c" {
@@ -20,7 +20,7 @@ func newDocData(existingDoc models.EsRes, msg models.MQ) models.DocData {
 	return updateDoc(existingDoc, msg)
 }
 
-func joinDoc(existingDoc models.EsRes, msg models.MQ) models.DocData {
+func joinDoc(existingDoc models.EsRes) models.DocData {
 	var actor, character models.SourceDoc
 	for _, hit := range existingDoc.Hits.Hits {
 		if hit.Source.ActorId > 0 {

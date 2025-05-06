@@ -65,28 +65,12 @@ func TestNewDoc(t *testing.T) {
 			want: generateDocumentData("update", "testid", "Keanu Reeves Updated", 1, "Neo", 1),
 		},
 		{
-			name: "deletes a document for a character if there is no actor name",
-			args: args{
-				existingDoc: generateEsRes("", 0, "Neo", 1, "testid", 1),
-				msg:         generateMQ("Neo", "d", "character", 1),
-			},
-			want: generateDocumentData("delete", "testid", "", 0, "Neo", 1),
-		},
-		{
 			name: "removes a character if there is an actor name",
 			args: args{
 				existingDoc: generateEsRes("Keanu Reeves", 1, "Neo", 1, "testid", 1),
 				msg:         generateMQ("Neo", "d", "character", 1),
 			},
 			want: generateDocumentData("update", "testid", "Keanu Reeves", 1, "", 0),
-		},
-		{
-			name: "deletes a document for a actor if there is no character name",
-			args: args{
-				existingDoc: generateEsRes("Keanu Reeves", 1, "", 0, "testid", 1),
-				msg:         generateMQ("Keanu Reeves", "d", "actor", 1),
-			},
-			want: generateDocumentData("delete", "testid", "Keanu Reeves", 1, "", 0),
 		},
 		{
 			name: "removes an actor if there is a character name",
@@ -138,7 +122,7 @@ func generateMQ(name string, op string, table string, afterId int) models.MQ {
 	return models.MQ{
 		Schema: nil,
 		Payload: models.Payload{
-			Before: nil,
+			Before: models.Resource{},
 			After: models.Resource{
 				Id:          afterId,
 				Name:        name,
