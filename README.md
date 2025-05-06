@@ -8,7 +8,9 @@ docker compose up -d
 
 While the images are downloading, import the postman collection. Once the docker stack is running and stable, run the postman request called `initialize elastic search`.
 
-Running all the tests in the postman `Full Inegration testa` collection sequentially. These are not automated and need to be run manually one by one. 
+Running all the tests in the postman `Full Inegration tests` collection sequentially. These are not automated and need to be run manually one by one. 
+# Data flow diagram
+![image](https://github.com/user-attachments/assets/b9df7c9f-5fc5-4d71-a24d-0a0e9bfb3191)
 
 # Considerations
 
