@@ -42,38 +42,7 @@
 								}
 							}
 						},
-						"url": "http://localhost:8080/characters"
-					},
-					"response": []
-				},
-				{
-					"name": "Create Character Again",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const payload = pm.response.json()",
-									"pm.collectionVariables.set('character2_id', payload.id)"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"id\":0,\"name\":\"Addam Marbrand\"}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "http://localhost:8080/characters"
+						"url": "http://localhost:8090/characters"
 					},
 					"response": []
 				},
@@ -100,7 +69,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "http://localhost:8080/characters"
+						"url": "http://localhost:8090/characters"
 					},
 					"response": []
 				},
@@ -126,7 +95,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "http://localhost:8080/characters/{{character_id}}"
+						"url": "http://localhost:8090/characters/{{character_id}}"
 					},
 					"response": []
 				},
@@ -162,7 +131,7 @@
 								}
 							}
 						},
-						"url": "http://localhost:8080/characters"
+						"url": "http://localhost:8090/characters"
 					},
 					"response": []
 				},
@@ -185,7 +154,7 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"url": "http://localhost:8080/characters/{{character_id}}"
+						"url": "http://localhost:8090/characters/{{character_id}}"
 					},
 					"response": []
 				}
@@ -227,7 +196,38 @@
 								}
 							}
 						},
-						"url": "http://localhost:8080/actors"
+						"url": "http://localhost:8090/actors"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Character",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const payload = pm.response.json()",
+									"pm.collectionVariables.set('character2_id', payload.id)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"id\":0,\"name\":\"Addam Marbrand\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8090/characters"
 					},
 					"response": []
 				},
@@ -254,7 +254,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "http://localhost:8080/actors"
+						"url": "http://localhost:8090/actors"
 					},
 					"response": []
 				},
@@ -280,7 +280,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "http://localhost:8080/actors/{{actor_id}}"
+						"url": "http://localhost:8090/actors/{{actor_id}}"
 					},
 					"response": []
 				},
@@ -316,7 +316,7 @@
 								}
 							}
 						},
-						"url": "http://localhost:8080/actors"
+						"url": "http://localhost:8090/actors"
 					},
 					"response": []
 				},
@@ -342,7 +342,7 @@
 					"request": {
 						"method": "PUT",
 						"header": [],
-						"url": "http://localhost:8080/actors/{{actor_id}}/link_to/{{character2_id}}"
+						"url": "http://localhost:8090/actors/{{actor_id}}/link_to/{{character2_id}}"
 					},
 					"response": []
 				},
@@ -366,7 +366,522 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"url": "http://localhost:8080/actors/{{actor_id}}"
+						"url": "http://localhost:8090/actors/{{actor_id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Character",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('delete character', () => {",
+									"    pm.response.to.have.status(204)",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8090/characters/{{character2_id}}"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Full Integration Tests",
+			"item": [
+				{
+					"name": "Create Actor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response",
+									"",
+									"pm.test('create actor', () => {",
+									"    response.to.have.status(201)",
+									"})",
+									"",
+									"const payload = response.json()",
+									"pm.collectionVariables.set('actor_id', payload.id)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"id\":null,\"name\":\"B.J. Hogg\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8090/actors"
+					},
+					"response": []
+				},
+				{
+					"name": "Search for actor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('actor shows in reponse', () => {",
+									"    const res = pm.response.json()",
+									"    const resString = JSON.stringify(res)",
+									"    const hasActorName = resString.includes('\"actor_name\":\"B.J. Hogg\"')",
+									"    const hasNoCharacterName = resString.includes('\"character_name\":\"\"')",
+									"    pm.expect(hasActorName).to.be.true",
+									"    pm.expect(hasNoCharacterName).to.be.true",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8090/search?q=B.J.%20Hogg",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8090",
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "B.J.%20Hogg"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Character",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const payload = pm.response.json()",
+									"pm.collectionVariables.set('character2_id', payload.id)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"id\":0,\"name\":\"Addam Marbrand\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8090/characters"
+					},
+					"response": []
+				},
+				{
+					"name": "Search for Character",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('actor shows in reponse', () => {",
+									"    const res = pm.response.json()",
+									"    const resString = JSON.stringify(res)",
+									"    pm.globals.set('username', resString)",
+									"    const hasCharacterName = resString.includes('\"character_name\":\"Addam Marbrand\"')",
+									"    const hasNoActorName = resString.includes('\"actor_name\":\"\"')",
+									"    pm.expect(hasCharacterName).to.be.true",
+									"    pm.expect(hasNoActorName).to.be.true",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8090/search?q=Addam%20Marbrand",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8090",
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "Addam%20Marbrand"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Link to Character",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('actor is linked to character', () => {",
+									"     pm.response.to.have.status(200)",
+									"",
+									"    const actor = pm.response.json()",
+									"    pm.expect(actor.character).to.not.be.null",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "http://localhost:8090/actors/{{actor_id}}/link_to/{{character2_id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Search for Link",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('actor shows in reponse', () => {",
+									"    const res = pm.response.json()",
+									"    const resString = JSON.stringify(res)",
+									"    pm.globals.set('username', resString)",
+									"    const hasCharacterName = resString.includes('\"character_name\":\"Addam Marbrand\"')",
+									"    const hasActorName = resString.includes('\"actor_name\":\"B.J. Hogg\"')",
+									"    pm.expect(hasCharacterName).to.be.true",
+									"    pm.expect(hasActorName).to.be.true",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8090/search?q=Addam%20Marbrand",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8090",
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "Addam%20Marbrand"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Actor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('actor is updated', () => {",
+									"    pm.response.to.have.status(200)",
+									"",
+									"    const actor = pm.response.json()",
+									"    const hasUpdatedInName = actor.name.includes('Updated')",
+									"    pm.expect(hasUpdatedInName).to.be.true",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"id\":{{actor_id}},\"name\":\"B.J. Hogg Updated\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8090/actors"
+					},
+					"response": []
+				},
+				{
+					"name": "Search for Updated Actor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('actor shows in reponse', () => {",
+									"    const res = pm.response.json()",
+									"    const resString = JSON.stringify(res)",
+									"    pm.globals.set('username', resString)",
+									"    const hasCharacterName = resString.includes('\"character_name\":\"Addam Marbrand\"')",
+									"    const hasNoActorName = resString.includes('\"actor_name\":\"B.J. Hogg Updated\"')",
+									"    pm.expect(hasCharacterName).to.be.true",
+									"    pm.expect(hasNoActorName).to.be.true",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8090/search?q=B.J.%20Hogg%20Updated",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8090",
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "B.J.%20Hogg%20Updated"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Actor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('delete actor', () => {",
+									"    pm.response.to.have.status(204)",
+									"})",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8090/actors/{{actor_id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Search for Deleted Actor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('actor shows in reponse', () => {",
+									"    const res = pm.response.json()",
+									"    const resString = JSON.stringify(res)",
+									"    pm.globals.set('username', resString)",
+									"    const hasNoResult = resString.includes('\"hits\":[]')",
+									"    pm.expect(hasNoResult).to.be.true",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8090/search?q=B.J.%20Hogg%20Updated",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8090",
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "B.J.%20Hogg%20Updated"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search for Character Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('actor shows in reponse', () => {",
+									"    const res = pm.response.json()",
+									"    const resString = JSON.stringify(res)",
+									"    pm.globals.set('username', resString)",
+									"    const hasCharacterName = resString.includes('\"character_name\":\"Addam Marbrand\"')",
+									"    const hasNoActorName = resString.includes('\"actor_name\":\"\"')",
+									"    pm.expect(hasCharacterName).to.be.true",
+									"    pm.expect(hasNoActorName).to.be.true",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8090/search?q=Addam%20Marbrand",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8090",
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "Addam%20Marbrand"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Character",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('delete character', () => {",
+									"    pm.response.to.have.status(204)",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8090/characters/{{character2_id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Search for Deleted Character",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('actor shows in reponse', () => {",
+									"    const res = pm.response.json()",
+									"    const resString = JSON.stringify(res)",
+									"    pm.globals.set('username', resString)",
+									"    const hasNoResult = resString.includes('\"hits\":[]')",
+									"    pm.expect(hasNoResult).to.be.true",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8090/search?q=Addam%20Marbrand",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8090",
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "Addam%20Marbrand"
+								}
+							]
+						}
 					},
 					"response": []
 				}
@@ -378,12 +893,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/search?q=hello",
+					"raw": "http://localhost:8090/search?q=hello",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "8090",
 					"path": [
 						"search"
 					],
@@ -394,6 +909,27 @@
 						}
 					]
 				}
+			},
+			"response": []
+		},
+		{
+			"name": "Initialize Elastic Search",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"mappings\": {\n        \"properties\": {\n            \"character_id\": {\"type\": \"integer\"},\n            \"character_name\": {\"type\": \"text\"},\n            \"actor_id\": {\"type\": \"integer\"},\n            \"actor_name\": {\"type\": \"text\"}\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:9200/got/"
 			},
 			"response": []
 		}

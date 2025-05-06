@@ -56,20 +56,15 @@ services:
 
   consumer:
     container_name: consumer
-    build:
-      context: ./consumer/got-consumer
-      dockerfile: Dockerfile
+    image: anytimesoon/got-consumer:latest
     restart: unless-stopped
-    command: ["./got-consumer", "-uri", "amqp://guest:guest@rabbitmq:5672/", "-es-uri", "http://elasticsearch:9200", "-exchange", "got_topic", "-exchange-type", "topic", "-queue", "got_queue", "-key", "got", "-consumer-tag", "go-consumer", "-verbose", "true", "-es-index", "got"]
     depends_on:
       - elasticsearch
       - rabbitmq
 
   api:
     container_name: api
-    build:
-      context: ./api/got-demo
-      dockerfile: Dockerfile
+    image: anytimesoon/got-api:latest
     ports:
       - "8090:8090"
     command: ["java", "-Dspring.datasource.url=jdbc:postgresql://postgres:5432/gotdb", "-Dspring.datasource.username=gotdb", "-Dspring.datasource.password=change_me", "-Delasticsearch.host=http://elasticsearch:9200", "-jar", "./build/libs/got-demo-0.0.1-SNAPSHOT.jar"]
