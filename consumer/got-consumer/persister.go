@@ -142,6 +142,8 @@ func getExisting(msg models.MQ) (models.EsRes, error) {
 }
 
 func buildQuery(msg models.MQ) string {
+	actorid, characterid := getId(msg.Payload)
+
 	switch msg.Payload.Source.Table {
 	case "actor":
 		return fmt.Sprintf(`{
@@ -153,7 +155,7 @@ func buildQuery(msg models.MQ) string {
 				  ]
 				}
 			  }
-			}`, msg.Payload.After.Id, msg.Payload.After.CharacterId)
+			}`, actorid, characterid)
 	default:
 		return fmt.Sprintf(`{
 			  "query": { 
@@ -163,7 +165,26 @@ func buildQuery(msg models.MQ) string {
 				  ]
 				}
 			  }
-			}`, msg.Payload.After.Id)
+			}`, characterid)
 	}
+
+}
+
+func getId(payload models.Payload) (int, int) {
+	var actorid, characterid int
+
+	if payload.Op == "d" && payload.Source.Table == "actor" {
+		actorid = payload.Before.Id
+		characterid = payload.Before.CharacterId
+	} else if payload.Op == "d" && payload.Source.Table == "character" {
+		characterid = payload.Before.Id
+	} else if payload.Source.Table == "actor" {
+		actorid = payload.After.Id
+		characterid = payload.After.CharacterId
+	} else {
+		characterid = payload.After.Id
+	}
+
+	return actorid, characterid
 
 }

@@ -6,15 +6,15 @@ type MQ struct {
 }
 
 type Payload struct {
-	Before      interface{} `json:"before"`
-	After       After       `json:"after"`
+	Before      Resource    `json:"before"`
+	After       Resource    `json:"after"`
 	Source      Source      `json:"source"`
 	Op          string      `json:"op"`
 	TsMs        int64       `json:"ts_ms"`
 	Transaction interface{} `json:"transaction"`
 }
 
-type After struct {
+type Resource struct {
 	Id          int    `json:"id"`
 	Name        string `json:"name"`
 	CharacterId int    `json:"character_id"`

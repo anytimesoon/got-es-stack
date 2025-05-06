@@ -57,7 +57,7 @@ func updateDoc(existingDoc models.EsRes, msg models.MQ) models.DocData {
 func deleteDoc(existingDoc models.EsRes, msg models.MQ) models.DocData {
 	doc := newDoc(existingDoc, msg)
 
-	if doc.ActorName == "" || doc.CharacterName == "" {
+	if doc.ActorName == "" && doc.CharacterName == "" {
 		var id string
 
 		if len(existingDoc.Hits.Hits) == 0 {

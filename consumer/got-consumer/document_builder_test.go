@@ -139,7 +139,7 @@ func generateMQ(name string, op string, table string, afterId int) models.MQ {
 		Schema: nil,
 		Payload: models.Payload{
 			Before: nil,
-			After: models.After{
+			After: models.Resource{
 				Id:          afterId,
 				Name:        name,
 				CharacterId: 0,
